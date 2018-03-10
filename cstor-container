@@ -13,6 +13,7 @@ sh autogen.sh
 make
 
 cd ../zfs
+ls
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-jemalloc
 make
