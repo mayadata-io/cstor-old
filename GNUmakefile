@@ -9,11 +9,11 @@ cstor-build:
 	@echo "----------------------------"
 	@sh cstor-container
 
-cstor-main-image: cstor-build
+cstor-base-image: cstor-build
 	@echo "----------------------------"
-	@echo "--> cstor-main-image         "
+	@echo "--> cstor-base-image         "
 	@echo "----------------------------"
-	@sudo docker build -f Dockerfile.maincontainer -t openebs/cstor-main-container:ci --build-arg BUILD_DATE=${BUILD_DATE} .       
+	@sudo docker build -f Dockerfile.Baseimage -t openebs/cstor-base:ci --build-arg BUILD_DATE=${BUILD_DATE} .       
 	@sh push
 
 prerequisites:

@@ -5,20 +5,14 @@ env:
     # Travis limits maximum log size, we have to cut tests output 
     - CODECOV_TOKEN="987cf0f1-ae3b-477e-b645-954e682f99ec"
     - ZFS_TEST_TRAVIS_LOG_MAX_LENGTH=800
-  matrix:
-    # tags are mainly in ascending order
-    - ZFS_BUILD_TAGS=0
-    - ZFS_BUILD_TAGS=1
+
+#matrix:
+    
 before_install:
-   # - sudo apt-get -qq update
-    - sudo apt-get install --yes -qq build-essential autoconf libtool gawk alien fakeroot linux-headers-$(uname -r) libaio-dev
-    - sudo apt-get install --yes -qq zlib1g-dev uuid-dev libattr1-dev libblkid-dev libselinux-dev libudev-dev libssl-dev
-    - sudo apt-get install lcov
-    # packages for tests
-    - sudo apt-get install --yes -qq parted lsscsi ksh attr acl nfs-kernel-server fio
-    - sudo apt-get install --yes -qq libgtest-dev cmake
+    make prerequisites
+
 install:
-    make cstor-main-image
+    make cstor-base-image
 
 #before_script:
 #    - make cstyle;

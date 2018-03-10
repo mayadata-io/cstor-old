@@ -2,39 +2,19 @@
 #set -e
 
 git clone https://github.com/openebs/zfs
-#git checkout zfs-0.7-release
-#cd zfs
-#bash -c "pushd ."
-#cd /usr/src/gtest
-#sudo cmake CMakeLists.txt
-#sudo make
-#sudo cp *.a /usr/lib
-#bash -c "popd"
-
-#cd ..
 git clone https://github.com/openebs/spl
+
+echo "Clone Completed"
 
 cd spl
 git checkout spl-0.7-release
 sh autogen.sh
 ./configure
-
-if [ $ZFS_BUILD_TAGS = 0 ]; then
-   make;
-else
-   make --no-print-directory -s pkg-utils pkg-kmod;
-   sudo dpkg -i *.deb;
-fi
+make
 
 cd ../zfs
 sh autogen.sh
+./configure --enable-uzfs=yes --with-jemalloc
+make
 
-if [ $ZFS_BUILD_TAGS = 0 ]; then
-   ./configure --enable-code-coverage=yes --enable-debug --enable-uzfs=yes;
-    make;
-else
-   ./configure --enable-code-coverage=yes --enable-debug;
-    make --no-print-directory -s pkg-utils pkg-kmod;
-    sudo dpkg -i *.deb;
-fi
-
+echo "Build Completed"
