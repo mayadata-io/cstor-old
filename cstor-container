@@ -14,7 +14,7 @@ make
 
 cd ../zfs
 sh autogen.sh
-./configure --enable-uzfs=yes --with-jemalloc
+./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
 
 echo "Build finished"
