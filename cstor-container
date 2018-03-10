@@ -13,9 +13,30 @@ sh autogen.sh
 make
 
 cd ../zfs
+pwd
 ls
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-jemalloc
+pwd
+ls
 make
+pwd
+ls /cmd/zrepl/.libs
+ls /cmd/zpool/.libs
+ls /cmd/zfs/.libs
+pwd
+cd ..
+pwd
+ls zfs/cmd/zrepl/.libs
+ls zfs/cmd/zpool/.libs
+ls zfs/cmd/zfs/.libs
 
+echo "listing zfs/cmd/*"
+ls zfs/cmd/zrepl/
+ls zfs/cmd/zpool/
+ls zfs/cmd/zfs/
+
+ls zfs/cmd/
+
+ls
 echo "Build Completed"
