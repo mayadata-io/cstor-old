@@ -39,4 +39,4 @@ ls zfs/cmd/zfs/
 ls zfs/cmd/
 
 ls
-echo "Build Completed"
+echo "Build finished"
