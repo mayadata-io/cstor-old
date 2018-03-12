@@ -13,7 +13,7 @@ sh autogen.sh
 make
 
 cd ../zfs
-git checkout zfs-0.7.4
+#git checkout zfs-0.7.4
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
