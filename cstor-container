@@ -19,10 +19,13 @@ sh autogen.sh
 make
 
 ls
-ls cmd/zrepl
-ls cmd/zrepl/.libs
+ls zfs/cmd/zrepl
+ls zfs/cmd/zrepl/.libs
+ls zfs/cmd/zpool/.libs
+ls zfs/cmd/zfs/.libs
+pwd
 
-if [ -e cmd/zrepl/.libs/zrepl -a -e cmd/zpool/.libs/zpool -a -e cmd/zfs/.libs/zfs ]; then
+if [ -e zfs/cmd/zrepl/.libs/zrepl -a -e zfs/cmd/zpool/.libs/zpool -a -e zfs/cmd/zfs/.libs/zfs ]; then
   echo "Build finished; Binaries are available"
 else
  echo "Build failure; Binaries are unavailable"
