@@ -13,18 +13,12 @@ sh autogen.sh
 make
 
 cd ../zfs
-git checkout zfs-0.7.4
+#git checkout zfs-0.7.4
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
 
-ls
-ls cmd/zrepl
-ls cmd/zrepl/.libs
-ls cmd/zpool/.libs
-ls cmd/zfs/.libs
-pwd
-
+#Check for build success or failure
 if [ -e cmd/zrepl/.libs/zrepl -a -e cmd/zpool/.libs/zpool -a -e cmd/zfs/.libs/zfs ]; then
   echo "Build finished; Binaries are available"
 else
