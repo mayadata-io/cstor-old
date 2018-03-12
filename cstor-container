@@ -7,14 +7,21 @@ git clone https://github.com/openebs/spl
 echo "Clone Completed"
 
 cd spl
-git checkout spl-0.7-release
+git checkout spl-0.7.4
 sh autogen.sh
 ./configure
 make
 
 cd ../zfs
+git checkout zfs-0.7.4
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
 
-echo "Build finished"
+if [ -e zfs/cmd/zrepl/.libs/zrepl -a -e zfs/cmd/zpool/.libs/zpool -a -e zfs/cmd/zfs/.libs/zfs ]; then
+  echo "Build finished; Binaries are available"
+else
+ echo "Build failure; Binaries are unavailable"
+ exit 1
+fi
+

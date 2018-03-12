@@ -1,7 +1,7 @@
 # Specify the date o build
 BUILD_DATE = $(shell date +'%Y%m%d%H%M%S')
 
-all: cstor-main-image
+all: cstor-base-image
 
 cstor-build:
 	@echo "----------------------------"
