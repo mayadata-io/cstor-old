@@ -1,12 +1,6 @@
 language: c
 sudo: required
-env:
-  global:
-    # Travis limits maximum log size, we have to cut tests output 
-   # - CODECOV_TOKEN="987cf0f1-ae3b-477e-b645-954e682f99ec"
-   # - ZFS_TEST_TRAVIS_LOG_MAX_LENGTH=800
 
-#matrix:
     
 before_install:
 #sudo apt-get -qq update
@@ -25,8 +19,8 @@ install:
     - sudo make
     - sudo cp *.a /usr/lib
     - popd
-
     - make cstor-base-image
+    - make cstor-main-image 
 
 #before_script:
 #    - make cstyle;
@@ -39,3 +33,4 @@ after_failure:
 after_success:
     - find /var/tmp/test_results/current/log -type f -name '*' -printf "%f\n" -exec cut -c -$ZFS_TEST_TRAVIS_LOG_MAX_LENGTH {} \;
     - bash <(curl -s https://codecov.io/bash)
+
