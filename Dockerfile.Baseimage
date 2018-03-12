@@ -1,6 +1,6 @@
 #
-# This Dockerfile builds a recent maya nodebot using the latest binary from
-# maya-nodebot  releases.
+# This Dockerfile builds a recent base image containing cstor binaries and 
+# libraries.
 #
 
 FROM ubuntu:16.04

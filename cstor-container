@@ -18,18 +18,4 @@ sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
 
-if [ $? -eq "0" ]; then
- echo "No error"
-else 
- echo "Error"
-fi
-
-
-#Check for build success or failure
-if [ -e cmd/zrepl/.libs/zrepl -a -e cmd/zpool/.libs/zpool -a -e cmd/zfs/.libs/zfs ]; then
-  echo "Build finished; Binaries are available"
-else
- echo "Build failure; Binaries are unavailable"
- #exit 1
-fi
-
+echo "Build Completed"

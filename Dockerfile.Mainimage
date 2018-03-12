@@ -1,6 +1,5 @@
 #
-# This Dockerfile builds a recent maya nodebot using the latest binary from
-# maya-nodebot  releases.
+# This Dockerfile builds cstor main container running zrepl from base image
 #
 
 FROM openebs/cstor-base:ci
