@@ -1,0 +1,21 @@
+#!/bin/bash
+set -ex
+
+git clone https://github.com/openebs/zfs
+git clone https://github.com/openebs/spl
+
+echo "Clone Completed"
+
+cd spl
+git checkout spl-0.7.4
+sh autogen.sh
+./configure
+make
+
+cd ../zfs
+#git checkout zfs-0.7.4
+sh autogen.sh
+./configure --enable-uzfs=yes --with-config=user --with-jemalloc
+make
+
+echo "Build Completed"
