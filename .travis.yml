@@ -20,7 +20,7 @@ install:
     - sudo cp *.a /usr/lib
     - popd
     - make cstor-base-image
-    - make cstor-main-image 
+    - make cstor-pool-image 
 
 #before_script:
 #    - make cstyle;

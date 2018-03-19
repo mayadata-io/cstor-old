@@ -4,9 +4,9 @@
 
 FROM openebs/cstor-base:ci
 
-COPY entrypoint-mainimage.sh /usr/local/bin/
+COPY entrypoint-poolimage.sh /usr/local/bin/
 
-RUN chmod +x /usr/local/bin/entrypoint-mainimage.sh
+RUN chmod +x /usr/local/bin/entrypoint-poolimage.sh
 
 ARG BUILD_DATE
 LABEL org.label-schema.name="cstor"
@@ -16,5 +16,5 @@ LABEL org.label-schema.vcs-url="https://github.com/openebs/cstor"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.build-date=$BUILD_DATE
 
-ENTRYPOINT entrypoint-mainimage.sh
+ENTRYPOINT entrypoint-poolimage.sh
 EXPOSE 7676
