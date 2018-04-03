@@ -28,7 +28,7 @@ cstor-basetest-image:
 	@echo "--> cstor-baseshared-image         "
 	@echo "----------------------------"
 	@sudo docker build -f Dockerfile.BaseTestImage -t openebs/cstor-test:ci --build-arg BUILD_DATE=${BUILD_DATE} .
-	@sh push-testimage
+	@sh push-basetestimage
 
 prerequisites:
 	@echo "----------------------------"
