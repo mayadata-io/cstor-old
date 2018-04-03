@@ -24,8 +24,7 @@ install:
     - sudo make
     - sudo cp *.a /usr/lib
     - popd
-    - make cstor-base-image
-    - make cstor-pool-image 
+    - make all
 
 #before_script:
 #    - make cstyle;

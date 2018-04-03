@@ -1,0 +1,23 @@
+#
+# This Dockerfile copies base image cstor binaries and 
+# libraries to shared location.
+#
+
+FROM openebs/cstor-base:ci
+
+COPY /usr/local/bin/zrepl /tmp/
+COPY /usr/local/bin/zpool /tmp/
+COPY /usr/local/bin/zfs /tmp/
+
+COPY /usr/lib/libzfs*.so* /tmp/
+COPY /usr/lib/libnvpair*.so* /tmp/
+COPY /usr/lib/libuutil*.so* /tmp/
+COPY /usr/lib/libzpool*.so* /tmp/
+
+ARG BUILD_DATE
+LABEL org.label-schema.name="cstor"
+LABEL org.label-schema.description="OpenEBS cstor"
+LABEL org.label-schema.url="http://www.openebs.io/"
+LABEL org.label-schema.vcs-url="https://github.com/openebs/cstor"
+LABEL org.label-schema.schema-version="1.0"
+LABEL org.label-schema.build-date=$BUILD_DATE
