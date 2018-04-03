@@ -5,14 +5,9 @@
 
 FROM openebs/cstor-base:ci
 
-COPY /usr/local/bin/zrepl /tmp/
-COPY /usr/local/bin/zpool /tmp/
-COPY /usr/local/bin/zfs /tmp/
+COPY entrypoint-basetest.sh /usr/local/bin/
 
-COPY /usr/lib/libzfs*.so* /tmp/
-COPY /usr/lib/libnvpair*.so* /tmp/
-COPY /usr/lib/libuutil*.so* /tmp/
-COPY /usr/lib/libzpool*.so* /tmp/
+RUN chmod +x /usr/local/bin/entrypoint-basetest.sh
 
 ARG BUILD_DATE
 LABEL org.label-schema.name="cstor"
@@ -21,3 +16,6 @@ LABEL org.label-schema.url="http://www.openebs.io/"
 LABEL org.label-schema.vcs-url="https://github.com/openebs/cstor"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.build-date=$BUILD_DATE
+
+ENTRYPOINT entrypoint-basetest.sh
+EXPOSE 7678
