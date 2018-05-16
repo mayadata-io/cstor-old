@@ -1,0 +1,16 @@
+CStorPool commands:
+Create Pool : zpool create [-o cachefile=/tmp/pool1.cache -o io.openebs:poolname=poolname] <guid-pool1> /dev/sdc1
+Delete Pool: zpool destroy <guid-pool1>
+Import Pool: zpool import [-o /tmp/pool1.cache -c /tmp/pool1.cache] <guid-pool1>
+Get Pool: zpool get -Hp name -o name
+Zpool get <pool-guid>
+Clear pool label: zpool labelclear -f <disk details>
+IsZreplRunning: zpool status(only exit status check)
+
+CStorVolumeReplica commands:
+Create Volume: zfs create -V 1G <guid-pool1>/<guid-vol1> -o io.openebs:targetip=IP:PORT -o io.openebs:volname=volname
+Delete Volume: zfs destroy guid-pool1/guid-vol1
+Get Volume: zfs get -Hp name -o name
+Get io.openebs:volname property : zfs get io.openebs:volname <poolguid>/<volguid>
+
+
