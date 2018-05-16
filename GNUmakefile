@@ -1,7 +1,7 @@
 # Specify the date o build
 BUILD_DATE = $(shell date +'%Y%m%d%H%M%S')
 
-all: cstor-base-image cstor-basetest-image cstor-pool-image
+all: cstor-base-image cstor-basetest-image cstor-pool-image cstor-istgt-image
 
 cstor-build:
 	@echo "----------------------------"
@@ -22,6 +22,14 @@ cstor-pool-image:
 	@echo "----------------------------"
 	@sudo docker build -f Dockerfile.Poolimage -t openebs/cstor-pool:ci --build-arg BUILD_DATE=${BUILD_DATE} .
 	@sh push-poolimage
+
+cstor-istgt-image:
+	@echo "----------------------------"
+	@echo "--> cstor-istgt-image         "
+	@echo "----------------------------"
+	@sh cstor-istgt
+	@sudo docker build -f Dockerfile.Istgtimage -t openebs/cstor-istgt:ci --build-arg BUILD_DATE=${BUILD_DATE} .
+	@sh push-istgtimage
 
 cstor-basetest-image:
 	@echo "----------------------------"
