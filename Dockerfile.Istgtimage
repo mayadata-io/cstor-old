@@ -1,0 +1,29 @@
+#
+# This Dockerfile builds cstor istgt container running istgt from istgt base image
+#
+
+FROM openebs/istgt_base:latest
+
+RUN mkdir -p /usr/local/etc/istgt
+RUN mkdir -p /tmp/cstor
+COPY istgt/src/istgt istgt/src/istgtcontrol /usr/local/bin/
+COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /usr/local/etc/istgt/
+COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /tmp/cstor/
+RUN touch /usr/local/etc/istgt/auth.conf
+RUN touch /usr/local/etc/istgt/logfile
+
+COPY istgt/src/init.sh /
+RUN chmod +x /init.sh
+COPY entrypoint-istgtimage.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint-istgtimage.sh
+
+ARG BUILD_DATE
+LABEL org.label-schema.name="cstor"
+LABEL org.label-schema.description="OpenEBS cstor"
+LABEL org.label-schema.url="http://www.openebs.io/"
+LABEL org.label-schema.vcs-url="https://github.com/openebs/cstor"
+LABEL org.label-schema.schema-version="1.0"
+LABEL org.label-schema.build-date=$BUILD_DATE
+
+ENTRYPOINT entrypoint-istgtimage.sh
+EXPOSE 3260 
