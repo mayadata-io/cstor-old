@@ -5,15 +5,11 @@
 FROM openebs/istgt_base:latest
 
 RUN mkdir -p /usr/local/etc/istgt
-RUN mkdir -p /tmp/cstor
 COPY istgt/src/istgt istgt/src/istgtcontrol /usr/local/bin/
 COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /usr/local/etc/istgt/
-COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /tmp/cstor/
 RUN touch /usr/local/etc/istgt/auth.conf
 RUN touch /usr/local/etc/istgt/logfile
 
-COPY istgt/src/init.sh /
-RUN chmod +x /init.sh
 COPY entrypoint-istgtimage.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint-istgtimage.sh
 
