@@ -22,4 +22,4 @@ LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.build-date=$BUILD_DATE
 
 ENTRYPOINT entrypoint-istgtimage.sh
-EXPOSE 3260 
+EXPOSE 3260 6060
