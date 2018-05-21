@@ -2,7 +2,11 @@
 # This Dockerfile builds cstor istgt container running istgt from istgt base image
 #
 
-FROM openebs/istgt_base:latest
+FROM ubuntu:16.04
+RUN apt-get update
+RUN apt-get -y install rsyslog
+RUN apt-get -y install libssl-dev
+RUN apt -y install apt-file && apt-file update
 
 RUN mkdir -p /usr/local/etc/istgt
 COPY istgt/src/istgt istgt/src/istgtcontrol /usr/local/bin/
