@@ -8,13 +8,17 @@ RUN apt-get -y install rsyslog
 RUN apt-get -y install libssl-dev libssl1.1
 RUN apt -y install apt-file && apt-file update
 
+RUN mkdir -p /tmp/cstor
 RUN mkdir -p /usr/local/etc/istgt
 COPY istgt/src/istgt istgt/src/istgtcontrol /usr/local/bin/
 COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /usr/local/etc/istgt/
+COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /tmp/cstor/
 RUN touch /usr/local/etc/istgt/auth.conf
 RUN touch /usr/local/etc/istgt/logfile
 
+COPY istgt/src/init.sh /usr/local/bin/
 COPY entrypoint-istgtimage.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/init.sh
 RUN chmod +x /usr/local/bin/entrypoint-istgtimage.sh
 
 ARG BUILD_DATE
