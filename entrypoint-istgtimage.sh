@@ -21,6 +21,7 @@ touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
 externalIP=127.0.0.1
 export externalIP=$externalIP
+service rsyslog start
 exec /usr/local/bin/istgt &
 
 child=$!
