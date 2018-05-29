@@ -16,10 +16,6 @@ size=1G
 mkdir -p $path
 touch $volname
 truncate -s $size $path/$volname
-touch $path/sdisk.img
-truncate -s $size $path/sdisk.img
-touch /tmp/ztest1.0a
-truncate -s 1G /tmp/ztest1.0a
 cp /usr/local/etc/bkpistgt/istgt.conf /usr/local/etc/istgt/
 touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
