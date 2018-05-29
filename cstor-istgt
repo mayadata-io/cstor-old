@@ -1,0 +1,15 @@
+#!/bin/bash
+set -ex
+
+rm -rvf istgt
+
+git clone -b replication --single-branch --depth 1 https://github.com/openebs/istgt.git
+
+echo "Clone Completed"
+
+cd istgt 
+./configure --with-replication
+make clean
+make
+
+echo "Build Completed"
