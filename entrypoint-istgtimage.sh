@@ -19,7 +19,7 @@ truncate -s $size $path/$volname
 cp /usr/local/etc/bkpistgt/istgt.conf /usr/local/etc/istgt/
 touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
-externalIP=127.0.0.1
+externalIP=0.0.0.0
 export externalIP=$externalIP
 service rsyslog start
 exec /usr/local/bin/istgt &
