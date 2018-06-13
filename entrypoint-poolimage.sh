@@ -10,11 +10,7 @@ echo  "exit code:" $?
 echo "reference: "  $0 
 }
 
-exec /usr/local/bin/zrepl > /var/log/zrepl.out &
-exec service ssh start &
-exec service rsyslog start &
-
-child=$!
-wait
+service ssh start
+exec /usr/local/bin/zrepl
 
 
