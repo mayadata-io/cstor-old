@@ -1,16 +1,56 @@
 CStorPool commands:
-Create Pool : zpool create [-o cachefile=/tmp/pool1.cache -o io.openebs:poolname=poolname] <guid-pool1> /dev/sdc1
-Delete Pool: zpool destroy <guid-pool1>
-Import Pool: zpool import [-o /tmp/pool1.cache -c /tmp/pool1.cache] <guid-pool1>
-Get Pool: zpool get -Hp name -o name
-Zpool get <pool-guid>
-Clear pool label: zpool labelclear -f <disk details>
-IsZreplRunning: zpool status(only exit status check)
+Create Pool : 
+zpool create [-o cachefile=/tmp/pool1.cache -O io.openebs:poolname=poolname] <pool1-guid> /dev/sdc1
+
+Delete Pool: 
+zpool destroy <pool1-guid>
+
+Import Pool: 
+zpool import [-o /tmp/pool1.cache -c /tmp/pool1.cache] <pool1-guid>
+
+Get Pool: 
+zpool get -Hp name -o name
+zpool get <pool-guid>
+
+Clear pool label: 
+zpool labelclear -f <disk details>
+
+IsZreplRunning: 
+zpool status(only exit status check)
+```
+  pool: pool1
+ state: ONLINE
+  scan: none requested
+config:
+
+	NAME              STATE     READ WRITE CKSUM
+	pool1             ONLINE       0     0     0
+	  /dev/sdc1       ONLINE       0     0     0
+
+errors: No known data errors
+```
+
+Set cachefile:
+zpool set cachefile <pool-guid>
 
 CStorVolumeReplica commands:
-Create Volume: zfs create -V 1G <guid-pool1>/<guid-vol1> -o io.openebs:targetip=IP:PORT -o io.openebs:volname=volname
-Delete Volume: zfs destroy guid-pool1/guid-vol1
-Get Volume: zfs get -Hp name -o name
-Get io.openebs:volname property : zfs get io.openebs:volname <poolguid>/<volguid>
+Create Volume: 
+zfs create -V 1G <pool1-guid>/<vol1-guid> -o io.openebs:targetip=IP:PORT -o io.openebs:volname=volname
 
+Delete Volume: 
+zfs destroy <pool1-guid>/<vol1-guid>
+
+Get Volume: 
+zfs get -Hp name -o name
+```
+pool1
+pool1/vol1
+```
+
+Get io.openebs:volname property : 
+zfs get io.openebs:volname <poolguid>/<volguid>
+```
+pool1
+pool1/vol1
+```
 
