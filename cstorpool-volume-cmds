@@ -1,6 +1,8 @@
 CStorPool commands:
 Create Pool : 
-To create zpool with cachefile and alias name in io.openebs:poolname for disk and guid as zpool name.
+To create zpool on specified disk with cachefile and alias name in io.openebs:poolname and guid as zpool name.
+Cachefile is for faster import of pool. Since guid is being used for poolname, alias name(e.g., testpool)
+ensures readability.
 zpool create [-o cachefile=/tmp/pool1.cache -O io.openebs:poolname=poolname] <pool1-guid> /dev/sdc1
 
 Delete Pool: 
@@ -43,7 +45,7 @@ zpool set cachefile=<pool.cache> <pool-guid>
 
 CStorVolumeReplica commands:
 Create Volume: 
-To create zfs volume of particular size on top of zpool with guid specifying target ip and alias name-io.openebs:volname.
+To create zfs volume of particular size on top of zpool with guid specifying target ip and alias in name-io.openebs:volname.
 zfs create -V 1G <pool1-guid>/<vol1-guid> -o io.openebs:targetip=IP:PORT -o io.openebs:volname=volname
 
 Delete Volume: 
