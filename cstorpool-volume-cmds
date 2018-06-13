@@ -1,18 +1,25 @@
 CStorPool commands:
 Create Pool : 
+To create zpool with cachefile and alias name in io.openebs:poolname for disk and guid as zpool name.
 zpool create [-o cachefile=/tmp/pool1.cache -O io.openebs:poolname=poolname] <pool1-guid> /dev/sdc1
 
 Delete Pool: 
+To destroy zpool with same name provided in zpool create,
 zpool destroy <pool1-guid>
 
 Import Pool: 
-zpool import [-o /tmp/pool1.cache -c /tmp/pool1.cache] <pool1-guid>
+To import zpool with cachefile and poolname,
+zpool import [-c /tmp/pool1.cache] <pool1-guid>
+To import zpool without cachefile,
+zpool import <pool1-guid>
 
 Get Pool: 
+To get poolname without table format -Hp flag is used and to get particular column -o is used.
 zpool get -Hp name -o name
 zpool get <pool-guid>
 
 Clear pool label: 
+The labels written to disk on previous zpool creation needs to be cleared.
 zpool labelclear -f <disk details>
 
 IsZreplRunning: 
@@ -31,16 +38,20 @@ errors: No known data errors
 ```
 
 Set cachefile:
-zpool set cachefile <pool-guid>
+Cachefile is for faster importing of pool. To set cachefile for particular pool,
+zpool set cachefile=<pool.cache> <pool-guid>
 
 CStorVolumeReplica commands:
 Create Volume: 
+To create zfs volume of particular size on top of zpool with guid specifying target ip and alias name-io.openebs:volname.
 zfs create -V 1G <pool1-guid>/<vol1-guid> -o io.openebs:targetip=IP:PORT -o io.openebs:volname=volname
 
 Delete Volume: 
+To destroy zfs volume,
 zfs destroy <pool1-guid>/<vol1-guid>
 
 Get Volume: 
+To get volume name without table format -Hp flag is used and to get particular column -o is used.
 zfs get -Hp name -o name
 ```
 pool1
