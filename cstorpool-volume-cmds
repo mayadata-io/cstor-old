@@ -1,12 +1,11 @@
 CStorPool commands:
 Create Pool : 
-To create zpool on specified disk with cachefile and alias name in io.openebs:poolname and guid as zpool name.
-Cachefile is for faster import of pool. Since guid is being used for poolname, alias name(e.g., testpool)
-ensures readability.
+To create zpool on a specified disk with cachefile and alias name in io.openebs:poolname and guid as zpool name.
+Cachefile helps in importing a pool faster. Guid is used for poolname and alias name, for example testpool, which ensures readability.
 zpool create [-o cachefile=/tmp/pool1.cache -O io.openebs:poolname=poolname] <pool1-guid> /dev/sdc1
 
 Delete Pool: 
-To destroy zpool with same name provided in zpool create,
+Destroys zpool with the same name you provided while creating zpool.
 zpool destroy <pool1-guid>
 
 Import Pool: 
@@ -21,7 +20,7 @@ zpool get -Hp name -o name
 zpool get <pool-guid>
 
 Clear pool label: 
-The labels written to disk on previous zpool creation needs to be cleared.
+The labels written to disk on previous zpool creation must be cleared.
 zpool labelclear -f <disk details>
 
 IsZreplRunning: 
@@ -40,7 +39,7 @@ errors: No known data errors
 ```
 
 Set cachefile:
-Cachefile is for faster importing of pool. To set cachefile for particular pool,
+Cachefile helps in importing a pool faster. To set cachefile for particular pool,
 zpool set cachefile=<pool.cache> <pool-guid>
 
 CStorVolumeReplica commands:
