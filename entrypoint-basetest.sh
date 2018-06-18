@@ -12,3 +12,4 @@ cp /usr/lib/libzfs*.so* $SHARED_LOC
 cp /usr/lib/libnvpair*.so* $SHARED_LOC
 cp /usr/lib/libuutil*.so* $SHARED_LOC
 cp /usr/lib/libzpool*.so* $SHARED_LOC
+cp /usr/lib/libzrepl*.so* $SHARED_LOC
