@@ -11,6 +11,8 @@ echo "reference: "  $0
 }
 
 service ssh start
-exec /usr/local/bin/zrepl
 
-
+if [ -z "$LOGLEVEL" ]; then
+	LOGLEVEL=info
+fi
+exec /usr/local/bin/zrepl -l $LOGLEVEL
