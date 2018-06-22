@@ -1,0 +1,68 @@
+CStorPool commands:
+Create Pool : 
+To create zpool on a specified disk with cachefile and alias name in io.openebs:poolname and guid as zpool name.
+Cachefile helps in importing a pool faster. Guid is used for poolname and alias name, for example testpool, which ensures readability.
+zpool create [-o cachefile=/tmp/pool1.cache -O io.openebs:poolname=poolname] <pool1-guid> /dev/sdc1
+
+Delete Pool: 
+Destroys zpool with the same name you provided while creating zpool.
+zpool destroy <pool1-guid>
+
+Import Pool: 
+To import zpool with cachefile and poolname,
+zpool import [-c /tmp/pool1.cache] <pool1-guid>
+To import zpool without cachefile,
+zpool import <pool1-guid>
+
+Get Pool: 
+To get poolname without table format -Hp flag is used and to get particular column -o is used.
+zpool get -Hp name -o name
+zpool get <pool-guid>
+
+Clear pool label: 
+The labels written to disk on previous zpool creation must be cleared.
+zpool labelclear -f <disk details>
+
+IsZreplRunning: 
+zpool status(only exit status check)
+```
+  pool: pool1
+ state: ONLINE
+  scan: none requested
+config:
+
+	NAME              STATE     READ WRITE CKSUM
+	pool1             ONLINE       0     0     0
+	  /dev/sdc1       ONLINE       0     0     0
+
+errors: No known data errors
+```
+
+Set cachefile:
+Cachefile helps in importing a pool faster. To set cachefile for particular pool,
+zpool set cachefile=<pool.cache> <pool-guid>
+
+CStorVolumeReplica commands:
+Create Volume: 
+To create zfs volume of particular size on top of zpool with guid specifying target ip and alias in name-io.openebs:volname.
+zfs create -V 1G <pool1-guid>/<vol1-guid> -o io.openebs:targetip=IP:PORT -o io.openebs:volname=volname
+
+Delete Volume: 
+To destroy zfs volume,
+zfs destroy <pool1-guid>/<vol1-guid>
+
+Get Volume: 
+To get volume name without table format -Hp flag is used and to get particular column -o is used.
+zfs get -Hp name -o name
+```
+pool1
+pool1/vol1
+```
+
+Get io.openebs:volname property : 
+zfs get io.openebs:volname <poolguid>/<volguid>
+```
+pool1
+pool1/vol1
+```
+
