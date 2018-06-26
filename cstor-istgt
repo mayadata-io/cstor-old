@@ -8,7 +8,8 @@ git clone -b replication --single-branch --depth 1 https://github.com/openebs/is
 echo "Clone Completed"
 
 cd istgt 
-./configure --with-replication
+./autogen.sh
+./configure --enable-replication
 make clean
 make
 
