@@ -11,10 +11,10 @@ echo "reference: "  $0
 }
 
 cp /usr/local/etc/bkpistgt/istgt.conf /usr/local/etc/istgt/
+cp /usr/local/etc/bkpistgt/istgtcontrol.conf /usr/local/etc/istgt/
 touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
-externalIP=0.0.0.0
-export externalIP=$externalIP
+export externalIP=0.0.0.0
 service rsyslog start
 exec /usr/local/bin/istgt &
 
