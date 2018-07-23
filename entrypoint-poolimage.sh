@@ -10,11 +10,9 @@ echo  "exit code:" $?
 echo "reference: "  $0 
 }
 
-exec /usr/local/bin/zrepl > /var/log/zrepl.out &
-exec service ssh start &
-exec service rsyslog start &
+service ssh start
 
-child=$!
-wait
-
-
+if [ -z "$LOGLEVEL" ]; then
+	LOGLEVEL=info
+fi
+exec /usr/local/bin/zrepl -l $LOGLEVEL
