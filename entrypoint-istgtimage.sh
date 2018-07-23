@@ -10,17 +10,11 @@ echo  "exit code:" $?
 echo "reference: "  $0 
 }
 
-volname=vol1
-path=/tmp/cstor
-size=1G
-mkdir -p $path
-touch $volname
-truncate -s $size $path/$volname
 cp /usr/local/etc/bkpistgt/istgt.conf /usr/local/etc/istgt/
+cp /usr/local/etc/bkpistgt/istgtcontrol.conf /usr/local/etc/istgt/
 touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
-externalIP=127.0.0.1
-export externalIP=$externalIP
+export externalIP=0.0.0.0
 service rsyslog start
 exec /usr/local/bin/istgt &
 
