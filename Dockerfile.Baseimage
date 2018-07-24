@@ -12,6 +12,7 @@ RUN apt-get clean && \
     libkqueue-dev libssl1.0.0 rsyslog net-tools gdb apt-utils \
     sed libjemalloc-dev openssh-server
 
+RUN export TERM=xterm-256color
 COPY zfs/cmd/zrepl/.libs/zrepl /usr/local/bin/
 COPY zfs/cmd/zpool/.libs/zpool /usr/local/bin/
 COPY zfs/cmd/zfs/.libs/zfs /usr/local/bin/

@@ -15,6 +15,7 @@ cp /usr/local/etc/bkpistgt/istgtcontrol.conf /usr/local/etc/istgt/
 touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
 export externalIP=0.0.0.0
+export TERM=xterm-256color
 service rsyslog start
 exec /usr/local/bin/istgt &
 
