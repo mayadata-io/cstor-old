@@ -10,7 +10,9 @@ echo  "exit code:" $?
 echo "reference: "  $0 
 }
 
-cp /usr/local/etc/bkpistgt/istgt.conf /usr/local/etc/istgt/
+if [ ! -f "/usr/local/etc/istgt/istgt.conf" ];then
+	cp /usr/local/etc/bkpistgt/istgt.conf /usr/local/etc/istgt/
+fi
 cp /usr/local/etc/bkpistgt/istgtcontrol.conf /usr/local/etc/istgt/
 touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
