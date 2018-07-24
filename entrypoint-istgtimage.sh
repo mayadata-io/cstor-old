@@ -16,6 +16,8 @@ touch /usr/local/etc/istgt/auth.conf
 touch /usr/local/etc/istgt/logfile
 export externalIP=0.0.0.0
 service rsyslog start
+sed -i -n '/LogicalUnit section/,$!p' /usr/local/etc/istgt/istgt.conf
+
 exec /usr/local/bin/istgt &
 
 child=$!

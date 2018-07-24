@@ -12,6 +12,7 @@ RUN apt -y install apt-file && apt-file update
 RUN mkdir -p /usr/local/etc/bkpistgt
 RUN mkdir -p /usr/local/etc/istgt
 COPY istgt/src/istgt istgt/src/istgtcontrol /usr/local/bin/
+COPY istgt/src/istgt.full istgt/src/istgtcontrol.full /usr/local/bin/
 COPY istgt/src/istgt.conf istgt/src/istgtcontrol.conf /usr/local/etc/bkpistgt/
 RUN touch /usr/local/etc/bkpistgt/auth.conf
 RUN touch /usr/local/etc/bkpistgt/logfile
