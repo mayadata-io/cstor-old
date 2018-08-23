@@ -14,14 +14,14 @@ cstor-base-image: cstor-build
 	@echo "--> cstor-base-image         "
 	@echo "----------------------------"
 	@sudo docker build -f Dockerfile.Baseimage -t openebs/cstor-base:ci --build-arg BUILD_DATE=${BUILD_DATE} .       
-	@sh push-baseimage
+	@bash push-baseimage
 
 cstor-pool-image:
 	@echo "----------------------------"
 	@echo "--> cstor-pool-image         "
 	@echo "----------------------------"
 	@sudo docker build -f Dockerfile.Poolimage -t openebs/cstor-pool:ci --build-arg BUILD_DATE=${BUILD_DATE} .
-	@sh push-poolimage
+	@bash push-poolimage
 
 cstor-istgt-image:
 	@echo "----------------------------"
@@ -29,14 +29,14 @@ cstor-istgt-image:
 	@echo "----------------------------"
 	@sh cstor-istgt
 	@sudo docker build -f Dockerfile.Istgtimage -t openebs/cstor-istgt:ci --build-arg BUILD_DATE=${BUILD_DATE} .
-	@sh push-istgtimage
+	@bash push-istgtimage
 
 cstor-basetest-image:
 	@echo "----------------------------"
 	@echo "--> cstor-baseshared-image         "
 	@echo "----------------------------"
 	@sudo docker build -f Dockerfile.BaseTestImage -t openebs/cstor-test:ci --build-arg BUILD_DATE=${BUILD_DATE} .
-	@sh push-basetestimage
+	@bash push-basetestimage
 
 prerequisites:
 	@echo "----------------------------"
