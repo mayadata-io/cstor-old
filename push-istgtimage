@@ -22,7 +22,7 @@ then
   fi;
   if [ ! -z "${IMAGE_TAG}" ] ;
   then
-    sudo docker tag ${IMAGEID} utkarshmani1997/cstor-istgt:${IMAGE_TAG}
+    sudo docker tag ${IMAGEID} openebs/cstor-istgt:${IMAGE_TAG}
     sudo docker push openebs/cstor-istgt:${IMAGE_TAG};
   fi;
 else
