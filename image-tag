@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Specify the date of build
+BUILD_DATE=$(date +'%Y%m%d%H%M%S')
+# Specify the build tag
+RELEASE_TAG="dev"
+VERSION="${RELEASE_TAG}-${BUILD_DATE}"
+IMAGE_TAG=${VERSION}
+export IMAGE_TAG
