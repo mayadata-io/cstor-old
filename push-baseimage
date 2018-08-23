@@ -4,21 +4,26 @@ set -e
 source "image-tag"
 IMAGEID=$( sudo docker images -q openebs/cstor-base:ci )
 
-if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ]; 
-then 
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ];
+then
   sudo docker login -u "${DNAME}" -p "${DPASS}";
   # Push image to docker hub
   sudo docker push openebs/cstor-base:ci ;
-  if [ ! -z "${IMAGE_TAG}" ] ; 
+  if [ ! -z "${TRAVIS_TAG}" ] ;
   then
     # Push with different tags if tagged as a release
-    # When github is tagged with a release, then Travis will 
-    # set the release tag in env IMAGE_TAG
-    sudo docker tag ${IMAGEID} openebs/cstor-base:${IMAGE_TAG}
-    sudo docker push openebs/cstor-base:${IMAGE_TAG}; 
+    # When github is tagged with a release, then Travis will
+    # set the release tag in env TRAVIS_TAG
+    sudo docker tag ${IMAGEID} openebs/cstor-base:${TRAVIS_TAG}
+    sudo docker push openebs/cstor-base:${TRAVIS_TAG};
     sudo docker tag ${IMAGEID} openebs/cstor-base:latest
-    sudo docker push openebs/cstor-base:latest; 
+    sudo docker push openebs/cstor-base:latest;
+  fi;
+  if [ ! -z "${IMAGE_TAG}" ] ;
+  then
+    sudo docker tag ${IMAGEID} openebs/cstor-base:${IMAGE_TAG}
+    sudo docker push openebs/cstor-base:${IMAGE_TAG};
   fi;
 else
-  echo "No docker credentials provided. Skip uploading openebs/cstor-base:ci to docker hub"; 
+  echo "No docker credentials provided. Skip uploading openebs/cstor-base:ci to docker hub";
 fi;
