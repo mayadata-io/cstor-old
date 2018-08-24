@@ -15,4 +15,6 @@ service ssh start
 if [ -z "$LOGLEVEL" ]; then
 	LOGLEVEL=info
 fi
+echo "sleeping for 2 sec"
+sleep 2
 exec /usr/local/bin/zrepl -l $LOGLEVEL
