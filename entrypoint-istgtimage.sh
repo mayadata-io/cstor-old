@@ -21,5 +21,5 @@ export externalIP=0.0.0.0
 service rsyslog start
 
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
-exec /usr/local/bin/istgt &
+exec /usr/local/bin/istgt
 
