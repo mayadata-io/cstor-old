@@ -3,17 +3,16 @@ set -e
 
 rm -rvf istgt
 if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
-
 then
     git clone -b replication --single-branch --depth 1 https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/istgt istgt
     echo "Clone Completed"
+    echo "chore(release): tagging istgt for ${TRAVIS_TAG} release"
 
     cd istgt
-    git remote rm origin
-    git remote add origin https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/istgt.git
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
-    echo "chore(release): tagging istgt for ${TRAVIS_TAG} release"
+    echo "pushed the tag: ${TRAVIS_TAG} to istgt repository"
+    cd ..
 else
     git clone -b replication --single-branch --depth 1 https://github.com/openebs/istgt.git
 
@@ -21,6 +20,10 @@ else
 fi
 
 cd istgt
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
+then
+    git checkout ${TRAVIS_TAG}
+fi;
 sh autogen.sh
 ./configure --enable-replication
 make clean

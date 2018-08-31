@@ -10,35 +10,47 @@ then
     git clone https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/spl spl
 
     echo "Clone Completed"
+    echo "chore(release): tagging zfs and spl for ${TRAVIS_TAG} release"
 
     cd spl
-    git remote rm origin
-    git remote add origin https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/spl.git
+    git checkout spl-0.7.9
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
+    echo "pushed the tag: ${TRAVIS_TAG} to spl repository"
 
     cd ../zfs
-    git remote rm origin
-    git remote add origin https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/zfs.git
+    git checkout zfs-0.7-release
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
-
-    echo "chore(release): tagging zfs and spl for ${TRAVIS_TAG} release"
+    echo "pushed the tag: ${TRAVIS_TAG} to zfs repository"
+    cd ..
 else
     git clone https://github.com/openebs/zfs
     git clone https://github.com/openebs/spl
 
     echo "Clone Completed"
 fi;
+
 cd spl
-git checkout spl-0.7.9
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
+then
+    git checkout ${TRAVIS_TAG}
+else
+    git checkout spl-0.7.9
+fi;
 sh autogen.sh
 ./configure
 make
 
 cd ../zfs
-git checkout zfs-0.7-release
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
+then
+    git checkout ${TRAVIS_TAG}
+else
+    git checkout zfs-0.7-release
+fi;
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
+
 echo "Build Complete";
