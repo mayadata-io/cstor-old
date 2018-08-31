@@ -13,3 +13,10 @@ sudo apt-get install --yes -qq libgtest-dev cmake
 sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-6 /usr/bin/gcc
 sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-6 /usr/bin/g++
 
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_USER_NAME}" ];
+then
+    git config --global user.email $GITHUB_USER_EMAIL
+    git config --global user.name $GITHUB_USER_NAME
+else
+    echo "No github credentials provided, will skip pushing of the release tags";
+fi;

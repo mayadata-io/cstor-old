@@ -1,11 +1,35 @@
 #!/bin/bash
-set -ex
+set -e
 
-git clone https://github.com/openebs/zfs
-git clone https://github.com/openebs/spl
+rm -rvf zfs
+rm -rvf spl
 
-echo "Clone Completed"
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
+then
+    git clone https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/zfs zfs
+    git clone https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/spl spl
 
+    echo "Clone Completed"
+
+    cd spl
+    git remote rm origin
+    git remote add origin https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/spl.git
+    git tag ${TRAVIS_TAG}
+    git push origin ${TRAVIS_TAG}
+
+    cd ../zfs
+    git remote rm origin
+    git remote add origin https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/zfs.git
+    git tag ${TRAVIS_TAG}
+    git push origin ${TRAVIS_TAG}
+
+    echo "chore(release): tagging zfs and spl for ${TRAVIS_TAG} release"
+else
+    git clone https://github.com/openebs/zfs
+    git clone https://github.com/openebs/spl
+
+    echo "Clone Completed"
+fi;
 cd spl
 git checkout spl-0.7.9
 sh autogen.sh
@@ -17,5 +41,4 @@ git checkout zfs-0.7-release
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
-
-echo "Build Completed"
+echo "Build Complete";
