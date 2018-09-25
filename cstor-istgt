@@ -2,28 +2,51 @@
 set -e
 
 rm -rvf istgt
+
+ISTGT_MASTER="replication"
+
 if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
 then
-    git clone -b replication --single-branch --depth 1 https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/istgt istgt
+    git clone -b ${ISTGT_MASTER} --single-branch --depth 1 https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/istgt istgt
     echo "Clone Completed"
-    echo "chore(release): tagging istgt for ${TRAVIS_TAG} release"
 
     cd istgt
+    echo "tagging istgt for ${TRAVIS_TAG} release"
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
     echo "pushed the tag: ${TRAVIS_TAG} to istgt repository"
     cd ..
 else
-    git clone -b replication --single-branch --depth 1 https://github.com/openebs/istgt.git
-
+    git clone -b ${ISTGT_MASTER} --single-branch --depth 1 https://github.com/openebs/istgt.git
     echo "Clone Completed"
 fi
 
 cd istgt
-if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
+
+#Checkout the correct istgt code base for compilation
+# - Release Tag
+# - Master branch  - will use branch - replication
+# - Non-master branch - checkout with branch name or 
+#   will fallback to default branch (replication)
+if [ ! -z "${TRAVIS_TAG}" ];
 then
+    echo "checkout code from release tag: ${TRAVIS_TAG}"
     git checkout ${TRAVIS_TAG}
+elif [ ! -z "${TRAVIS_BRANCH}" ];
+then
+    if [ $TRAVIS_BRANCH = "master" ];
+    then
+        echo "checkout code from branch: ${ISTGT_MASTER}"
+        #This repo is setup with default ISTGT_MASTER, no
+        # need to checkout again
+    else
+        echo "checkout code from branch: ${TRAVIS_BRANCH}"
+        git checkout ${TRAVIS_BRANCH}
+        #This repo is setup with default ISTGT_MASTER,
+        # on error, it will use the default
+    fi;
 fi;
+
 sh autogen.sh
 ./configure --enable-replication
 make clean
