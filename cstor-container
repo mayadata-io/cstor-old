@@ -66,7 +66,7 @@ then
     else
         echo "checkout code from branch: ${TRAVIS_BRANCH}"
         git checkout ${TRAVIS_BRANCH}
-        rc=$?; if [ $rc -ne 0 ]; then git checkout ${ZFS_MASTER}; exit; fi
+        rc=$?; if [ $rc -ne 0 ]; then git checkout ${ZFS_MASTER}; fi
     fi;
 fi;
 
