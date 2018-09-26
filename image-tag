@@ -1,9 +1,19 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Specify the date of build
 BUILD_DATE=$(date +'%Y%m%d%H%M%S')
-# Specify the build tag
-RELEASE_TAG="dev"
-VERSION="${RELEASE_TAG}-${BUILD_DATE}"
-IMAGE_TAG=${VERSION}
+GIT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+
+# There can be multiple active branches. 
+# Prefix the ci tags with branch name, except when building from master.
+MASTER="master"
+if [ "$GIT_BRANCH" == "$MASTER" ];
+then
+  CI_IMAGE_TAG="ci"
+else
+  CI_IMAGE_TAG="$GIT_BRANCH-ci"
+fi
+export CI_IMAGE_TAG
+
+IMAGE_TAG="${GIT_BRANCH}-${BUILD_DATE}"
 export IMAGE_TAG

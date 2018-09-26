@@ -8,7 +8,10 @@ if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ];
 then
   sudo docker login -u "${DNAME}" -p "${DPASS}";
   # Push image to docker hub
-  sudo docker push openebs/cstor-base:ci ;
+  # sudo docker push openebs/cstor-base:ci ;
+  sudo docker tag ${IMAGEID} openebs/cstor-base:${CI_IMAGE_TAG}
+  sudo docker push openebs/cstor-base:${CI_IMAGE_TAG};
+
   if [ ! -z "${TRAVIS_TAG}" ] ;
   then
     # Push with different tags if tagged as a release
