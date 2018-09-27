@@ -4,72 +4,85 @@ set -e
 rm -rvf zfs
 rm -rvf spl
 
+#Current active (master) zfs and spl development branch
 ZFS_MASTER="zfs-0.7-release"
 SPL_STABLE_TAG="spl-0.7.9"
 
-if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
-then
-    git clone https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/zfs zfs
-    git clone https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/spl spl
+ZFS_REPO="https://github.com/openebs/zfs.git"
+SPL_REPO="https://github.com/openebs/spl.git"
 
-    echo "Clone Completed"
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ];
+then
+  ZFS_REPO="https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/zfs.git"
+  SPL_REPO="https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/spl.git"
+fi
+
+#Determinte the current branch depending on the build env.
+CURRENT_BRANCH=""
+if [ -z ${TRAVIS_BRANCH} ];
+then
+  CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+else
+  CURRENT_BRANCH=${TRAVIS_BRANCH}
+fi
+
+#Depending on the current (cstor) branch name decide on the ZFS Build branch.
+# If current is master - use $ZFS_MASTER
+# If current is non master branch and if it exists on remote use non-master branch
+#   else set it to $ZFS_MASTER
+ZFS_BUILD_BRANCH=${ZFS_MASTER}
+if [ -z ${CURRENT_BRANCH} ] || [ ${CURRENT_BRANCH} = "master" ];
+then
+  echo "Using master build branch: ${ZFS_BUILD_BRANCH}"
+else
+  #If the current branch exists on the remote repo, use it for building
+  # Branch names can be really funky with substring matches.
+  # Extract the branch name from git ls-remote. The output line will be like:
+  #  a8577bdb32e091645df901d8501e44ef50748389        refs/heads/master
+  #  3be04072fa507127e9161283f27024e2bde702e3        refs/heads/rebuild_snapshot
+  #  33218f9966a12f8961f7d7e94307a74328acf928        refs/heads/rebuild_snapshot_1
+  BF=$(git ls-remote --heads ${ZFS_REPO} | cut -d '/' -f3 | grep -x "${CURRENT_BRANCH}" | wc -l)
+  if [ $BF -ne 0 ]; then
+    ZFS_BUILD_BRANCH=${CURRENT_BRANCH}
+    echo "Using build branch: ${ZFS_BUILD_BRANCH}"
+  else
+    echo "${CURRENT_BRANCH} not found on zfs repo."
+    echo "Using master build branch: ${ZFS_BUILD_BRANCH}"
+  fi
+fi
+
+
+git clone -b ${ZFS_BUILD_BRANCH} --single-branch --depth 1 ${ZFS_REPO} zfs
+git clone -b ${SPL_STABLE_TAG} --single-branch --depth 1 ${SPL_REPO} spl
+echo "Clone Completed"
+
+
+#If this is a tagged release, tag the repo and set build branch to tag.
+if [ ! -z "${TRAVIS_TAG}" ];
+then
     echo "tagging zfs and spl for ${TRAVIS_TAG} release"
 
     cd spl
-    git checkout ${SPL_STABLE_TAG}
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
     echo "pushed the tag: ${TRAVIS_TAG} to spl repository"
+    git checkout ${TRAVIS_TAG}
 
     cd ../zfs
-    git checkout ${ZFS_MASTER}
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
     echo "pushed the tag: ${TRAVIS_TAG} to zfs repository"
-    cd ..
-else
-    git clone https://github.com/openebs/zfs
-    git clone https://github.com/openebs/spl
+    git checkout ${TRAVIS_TAG}
 
-    echo "Clone Completed"
+    cd ..
 fi;
 
 cd spl
-if [ ! -z "${TRAVIS_TAG}" ];
-then
-    git checkout ${TRAVIS_TAG}
-else
-    # Note: Currently there is no change in the spl code base
-    # always use the upstream stable tag
-    git checkout ${SPL_STABLE_TAG}
-fi;
 sh autogen.sh
 ./configure
 make
 
 cd ../zfs
-#Checkout the correct zfs code base for compilation
-# - Release Tag
-# - Master branch  - will use active dev branch (zfs-0.7-release)
-# - Non-master branch - checkout with branch name or 
-#   will fallback to active dev branch
-if [ ! -z "${TRAVIS_TAG}" ];
-then
-    echo "checkout code from release tag: ${TRAVIS_TAG}"
-    git checkout ${TRAVIS_TAG}
-elif [ ! -z "${TRAVIS_BRANCH}" ];
-then
-    if [ $TRAVIS_BRANCH = "master" ];
-    then
-        echo "checkout code from branch: ${ZFS_MASTER}"
-        git checkout ${ZFS_MASTER}
-    else
-        echo "checkout code from branch: ${TRAVIS_BRANCH}"
-        git checkout ${TRAVIS_BRANCH}
-        rc=$?; if [ $rc -ne 0 ]; then git checkout ${ZFS_MASTER}; fi
-    fi;
-fi;
-
 sh autogen.sh
 ./configure --enable-uzfs=yes --with-config=user --with-jemalloc
 make
