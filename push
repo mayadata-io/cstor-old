@@ -1,0 +1,55 @@
+#!/bin/bash
+set -e
+
+if [ -z ${IMAGE_REPO} ];
+then
+  echo "Missing image repository in IMAGE_REPO. Skip uploading images..";
+fi
+
+IMAGEID=$( sudo docker images -q ${IMAGE_REPO}:ci )
+echo ${IMAGEID}
+
+# Specify the date of build
+BUILD_DATE=$(date +'%Y%m%d%H%M%S')
+
+#Determinte the current branch depending on the build env.
+CURRENT_BRANCH=""
+if [ -z ${TRAVIS_BRANCH} ];
+then
+  CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+else
+  CURRENT_BRANCH=${TRAVIS_BRANCH}
+fi
+
+if [ -z ${CURRENT_BRANCH} ] || [ ${CURRENT_BRANCH} = "master" ];
+then
+  CI_IMAGE_TAG="ci"
+  IMAGE_TAG="master-${BUILD_DATE}"
+else
+  CI_IMAGE_TAG="${CURRENT_BRANCH}-ci"
+  IMAGE_TAG="${CURRENT_BRANCH}-${BUILD_DATE}"
+fi
+
+if [ ! -z "${DNAME}" ] && [ ! -z "${DPASS}" ];
+then
+  sudo docker login -u "${DNAME}" -p "${DPASS}";
+  # Push CI tagged image - :ci or :branch-ci
+  sudo docker tag ${IMAGEID} ${IMAGE_REPO}:${CI_IMAGE_TAG}
+  sudo docker push ${IMAGE_REPO}:${CI_IMAGE_TAG};
+  # Push unique tagged image - :master-<uuid> or :branch-<uuid>
+  sudo docker tag ${IMAGEID} ${IMAGE_REPO}:${IMAGE_TAG}
+  sudo docker push ${IMAGE_REPO}:${IMAGE_TAG};
+
+  if [ ! -z "${TRAVIS_TAG}" ] ;
+  then
+    # Push with different tags if tagged as a release
+    # When github is tagged with a release, then Travis will
+    # set the release tag in env TRAVIS_TAG
+    sudo docker tag ${IMAGEID} ${IMAGE_REPO}:${TRAVIS_TAG}
+    sudo docker push ${IMAGE_REPO}:${TRAVIS_TAG};
+    sudo docker tag ${IMAGEID} ${IMAGE_REPO}:latest
+    sudo docker push ${IMAGE_REPO}:latest;
+  fi;
+else
+  echo "No docker credentials provided. Skip uploading ${IMAGE_REPO} to docker hub";
+fi;

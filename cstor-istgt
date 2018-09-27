@@ -3,49 +3,72 @@ set -e
 
 rm -rvf istgt
 
-ISTGT_MASTER="replication"
 
-if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ] && [ ! -z "${TRAVIS_TAG}" ];
+#Current active (master) istgt development branch
+ISTGT_MASTER="replication"
+ISTGT_REPO="https://github.com/openebs/istgt.git"
+if [ ! -z "${GITHUB_USER_NAME}" ] && [ ! -z "${GITHUB_API_KEY}" ];
 then
-    git clone -b ${ISTGT_MASTER} --single-branch --depth 1 https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/istgt istgt
-    echo "Clone Completed"
+  ISTGT_REPO="https://${GITHUB_USER_NAME}:${GITHUB_API_KEY}@github.com/openebs/istgt.git"
+fi
+
+
+#Determinte the current branch depending on the build env.
+CURRENT_BRANCH=""
+if [ -z ${TRAVIS_BRANCH} ];
+then
+  CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+else
+  CURRENT_BRANCH=${TRAVIS_BRANCH}
+fi
+
+#Depending on the current (cstor) branch name decide on the Build branch.
+# If current is master - use ${ISTGT_MASTER}
+# If current is non master branch and if it exists on remote use non-master branch
+#   else set it to ${ISTGT_MASTER}
+ISTGT_BUILD_BRANCH=${ISTGT_MASTER}
+if [ -z ${CURRENT_BRANCH} ] || [ ${CURRENT_BRANCH} = "master" ];
+then
+  echo "Using master build branch: ${ISTGT_BUILD_BRANCH}"
+else
+  #If the current branch exists on the remote repo, use it for building
+  #If the current branch exists on the remote repo, use it for building
+  # Branch names can be really funky with substring matches.
+  # Extract the branch name from git ls-remote. The output line will be like:
+  #  8e4ef751ee7ebb0a7f66b00014daf230a4cd3de5        refs/heads/rebuild
+  #  4f70b98b38c582485542a6e62d0c1fb8ac3aad6c        refs/heads/rebuild_snapshot
+  #  1f967d9fd51143d9597c30161cf30513dacc73ee        refs/heads/replica
+  #  d43f44973484f8b7d8d16b1004632606ab09eb2c        refs/heads/replication
+  #  19ceccb79d4951cc54d4d0da4c1e9829b7ae00ad        refs/heads/revert-27-master
+  BF=$(git ls-remote --heads ${ISTGT_REPO} | cut -d '/' -f3 | grep -x "${CURRENT_BRANCH}" | wc -l)
+  if [ $BF -ne 0 ]; then
+    ISTGT_BUILD_BRANCH=${CURRENT_BRANCH}
+    echo "Using build branch: ${ISTGT_BUILD_BRANCH}"
+  else
+    echo "${CURRENT_BRANCH} not found on istgt repo."
+    echo "Using master build branch: ${ISTGT_BUILD_BRANCH}"
+  fi
+fi
+
+
+git clone -b ${ISTGT_BUILD_BRANCH} --single-branch --depth 1 ${ISTGT_REPO}
+echo "Clone Completed"
+
+#If this is a tagged release, tag the repo and set build branch to tag.
+if [ ! -z "${TRAVIS_TAG}" ];
+then
 
     cd istgt
     echo "tagging istgt for ${TRAVIS_TAG} release"
     git tag ${TRAVIS_TAG}
     git push origin ${TRAVIS_TAG}
     echo "pushed the tag: ${TRAVIS_TAG} to istgt repository"
+    git checkout ${TRAVIS_TAG}
     cd ..
-else
-    git clone -b ${ISTGT_MASTER} --single-branch --depth 1 https://github.com/openebs/istgt.git
-    echo "Clone Completed"
 fi
 
 cd istgt
 
-#Checkout the correct istgt code base for compilation
-# - Release Tag
-# - Master branch  - will use branch - replication
-# - Non-master branch - checkout with branch name or 
-#   will fallback to default branch (replication)
-if [ ! -z "${TRAVIS_TAG}" ];
-then
-    echo "checkout code from release tag: ${TRAVIS_TAG}"
-    git checkout ${TRAVIS_TAG}
-elif [ ! -z "${TRAVIS_BRANCH}" ];
-then
-    if [ $TRAVIS_BRANCH = "master" ];
-    then
-        echo "checkout code from branch: ${ISTGT_MASTER}"
-        #This repo is setup with default ISTGT_MASTER, no
-        # need to checkout again
-    else
-        echo "checkout code from branch: ${TRAVIS_BRANCH}"
-        git checkout ${TRAVIS_BRANCH}
-        #This repo is setup with default ISTGT_MASTER,
-        # on error, it will use the default
-    fi;
-fi;
 
 sh autogen.sh
 ./configure --enable-replication
