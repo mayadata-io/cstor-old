@@ -1,26 +1,10 @@
-
-# See docs/examples
-# http://doc.gitlab.com/ce/ci/quick_start/README.html
-# http://doc.gitlab.com/ce/ci/yaml/README.html
-
-# GitLab CI template for Go tests. Note this installs
-# a new working copy of Go in a non-standard path such
-# that sudo/root is not needed for the install stage.
-
-# note that this particular install-environment stage
-# is overly verbose in order to debug anything tricky
-# or weird in your environment - feel free to trim it 
-# down as needed
-
 stages:
- # - install-environment
   - build
   - baseline
 
 
 build-cstor:
    stage: build
-   #image: harshvkarn/dind:v6
    before_script:
      - echo $HOME
      - export BRANCH=${CI_COMMIT_REF_NAME}
@@ -39,10 +23,8 @@ build-cstor:
      - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-6 /usr/bin/gcc
      - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-6 /usr/bin/g++
    script: 
-    - echo "Maya"
+    - echo "CSTOR"
     - echo $COMMIT
-    - pwd
-    - ls
     - pushd .
     - cd /usr/src/gtest
     - sudo cmake CMakeLists.txt
@@ -54,30 +36,21 @@ build-cstor:
 
 baseline-image:
   stage: baseline
-  #image: atulabhi/kops:v8
   script:
-    - pwd
-    #- git clone https://github.com/itsmesinghavneet/baseline.git
-    #- cd baseline
-    #- wget https://raw.githubusercontent.com/harshvkarn/test-1/baseline/platforms/commit-writer/write-commit.yml
-  #  - ansible-playbook write-commit.yml --extra-vars "branch=$CI_PROJECT_NAME commit=ci"
-  #  - git add .
-  #  - git commit -m "updated baseline jiva"
-  #  - git push 'https://itsmesinghavneet:gitlab123@github.com/itsmesinghavneet/baseline.git'
-  #  - "curl -X POST -F token=a70ff62f6fb0f8013c687087ae5565 -F ref=test https://gitlab.com/api/v4/projects/7642571/trigger/pipeline"
-
-
-
-
-#build-maya:
-#  stage: build
-#  script:
-#    - cd $CURRENT_BUILD_PATH
-#    - go build
-
-#test-my-project:
-#  stage: test
-#  script:
-#    - cd $CURRENT_BUILD_PATH
-#    - go test
-
+     - pwd
+     - export BRANCH=${CI_COMMIT_REF_NAME}
+     - echo $BRANCH
+     - export COMMIT=${CI_COMMIT_SHA:0:8}
+     - echo $COMMIT
+     - git clone https://github.com/openebs/e2e-infrastructure.git
+     - cd e2e-infrastructure/baseline
+     - ansible-playbook commit-writer.yml --extra-vars "branch=$BRANCH repo=$CI_PROJECT_NAME commit=$COMMIT"
+     - git status
+     - git add baseline
+     - git status
+     - git commit -m "updated $CI_PROJECT_NAME commit:$COMMIT"
+     - git push  https://$user:$pass@github.com/openebs/e2e-infrastructure.git --all
+     - curl -X POST -F token=$AWS -F ref=master https://gitlab.openebs.ci/api/v4/projects/7/trigger/pipeline
+     - curl -X POST -F token=$GCP -F ref=master https://gitlab.openebs.ci/api/v4/projects/9/trigger/pipeline
+     - curl -X POST -F token=$AZURE -F ref=master https://gitlab.openebs.ci/api/v4/projects/20/trigger/pipeline
+     - curl -X POST -F token=$PACKET-F ref=master https://gitlab.openebs.ci/api/v4/projects/19/trigger/pipeline
