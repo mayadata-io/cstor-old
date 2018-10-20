@@ -1,13 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -o errexit
 trap 'call_exit $LINE_NO' EXIT
 
-call_exit()
-{
-echo "at call_exit.."     
-echo  "exit code:" $?
-echo "reference: "  $0 
+call_exit() {
+    echo "at call_exit.."     
+    echo "exit code:  $?" 
+    echo "reference:  $0"   
 }
 
 if [ ! -f "/usr/local/etc/istgt/istgt.conf" ];then
