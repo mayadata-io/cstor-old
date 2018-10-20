@@ -92,9 +92,15 @@ restart_replica() {
 	echo "$replica_id"
 }
 
-stop_replica() {
+stop_container() {
 	replica_id=$(docker stop "$1")
 	echo "$replica_id"
+}
+
+start_container() {
+	replica_id=$(docker start "$1")
+	echo "$replica_id"
+
 }
 
 login_to_volume() {
@@ -160,6 +166,20 @@ write_and_verify_data(){
 	fi
 }
 
+check_data_integrity_with_replica() {
+	# stopping one replica
+	replica_id_stop=$(stop_container "$1")
+	sleep 10
+	write_and_verify_data
+
+	# starting the replica
+	replica_id_start=$(start_container "$replica_id_stop")
+	sleep 10
+	write_and_verify_data
+
+	echo "Done for replica: $replica_id_stop"
+}
+
 run_data_integrity_test() {
 	setup_test_env
 
@@ -174,15 +194,9 @@ run_data_integrity_test() {
 	sleep 5
 	write_and_verify_data
 
-	replica1_id=$(restart_replica "$CONTROLLER_IP" "$REPLICA_IP1" "vol1")
-	sleep 5
-	write_and_verify_data
-
-	replica2_id_stop=$(stop_replica "$replica2_id")
-	sleep 10
-	echo $replica1_id_stop
-	write_and_verify_data
-	echo "Test after stoping one replica"
+	check_data_integrity_with_replica "$replica1_id"
+	check_data_integrity_with_replica "$replica2_id"
+	check_data_integrity_with_replica "$replica3_id"
 
 	cleanup_test_env
 }
