@@ -92,6 +92,11 @@ restart_replica() {
 	echo "$replica_id"
 }
 
+stop_replica() {
+	replica_id=$(docker stop "$1")
+	echo "$replica_id"
+}
+
 login_to_volume() {
 	$ISCSIADM -m discovery -t st -p $1
 	$ISCSIADM -m node -l
@@ -172,6 +177,12 @@ run_data_integrity_test() {
 	replica1_id=$(restart_replica "$CONTROLLER_IP" "$REPLICA_IP1" "vol1")
 	sleep 5
 	write_and_verify_data
+
+	replica2_id_stop=$(stop_replica "$replica2_id")
+	sleep 10
+	echo $replica1_id_stop
+	write_and_verify_data
+	echo "Test after stoping one replica"
 
 	cleanup_test_env
 }
