@@ -1,13 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -o errexit
 trap 'call_exit $LINE_NO' EXIT
 
-call_exit()
-{
-echo "at call_exit.."     
-echo  "exit code:" $?
-echo "reference: "  $0 
+call_exit() {
+    echo "at call_exit.."
+    echo "exit code: $?"
+    echo "reference: $0"
 }
 
 service ssh start
@@ -18,4 +17,4 @@ fi
 echo "sleeping for 2 sec"
 sleep 2
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
-exec /usr/local/bin/zrepl -l $LOGLEVEL
+exec /usr/local/bin/zrepl -l "$LOGLEVEL"

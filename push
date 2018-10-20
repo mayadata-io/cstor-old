@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e
 
 if [ -z ${IMAGE_REPO} ];
@@ -16,7 +17,7 @@ BUILD_DATE=$(date +'%Y%m%d%H%M%S')
 CURRENT_BRANCH=""
 if [ -z ${TRAVIS_BRANCH} ];
 then
-  CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
+  CURRENT_BRANCH=$( git rev-parse --abbrev-ref HEAD 2> /dev/null)
 else
   CURRENT_BRANCH=${TRAVIS_BRANCH}
 fi
