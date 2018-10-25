@@ -21,7 +21,7 @@ size=1G
 
 install_prerequisites() {
 	which iscsiadm
-	if [ ! -z $? ]; then
+	if [ $? -ne 0 ]; then
 		apt-get install -y open-iscsi;
 	fi
 }
@@ -88,7 +88,7 @@ start_replica() {
 }
 
 restart_replica() {
-	replica_id=$(docker run -d -it --net stg-net --ip "$2" -v /tmp/"$3":/vol $ZFS_IMG)
+	replica_id=$(docker restart $1)
 	echo "$replica_id"
 }
 
@@ -165,7 +165,7 @@ run_data_integrity_test() {
 	sleep 15
 	write_and_verify_data
 
-	docker stop $replica1_id
+	replica1_id=$(restart_replica "${replica1_id}")
 	sleep 5
 	write_and_verify_data
 
