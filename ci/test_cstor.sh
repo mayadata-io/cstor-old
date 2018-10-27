@@ -42,6 +42,8 @@ cleanup_replicas() {
 }
 
 cleanup_test_env() {
+	umount /mnt/store
+	logout_of_volume
 	cleanup_replicas
 	cleanup_istgt
 	rm -rf /tmp/vol*
@@ -82,7 +84,7 @@ start_istgt() {
 start_replica() {
 	replica_id=$(docker run -d --net stg-net --ip "$2" -v /tmp/"$3"/:/vol $ZFS_IMG)
 	sleep 10
-	docker exec $replica_id $ZPOOL create -f replica_pool /vol/zpool.img
+	docker exec $replica_id $ZPOOL create -f replica_pool -o cachefile=/vol/zpool.cache /vol/zpool.img
 	docker exec $replica_id $ZFS create -V1g -b 4k -s -o io.openebs:targetip="$1"  replica_pool/volume
 	echo "$replica_id"
 }
@@ -99,8 +101,9 @@ stop_container() {
 
 start_container() {
 	replica_id=$(docker start "$1")
+	sleep 2
+	docker exec $replica_id $ZPOOL import -c /vol/zpool.cache replica_pool
 	echo "$replica_id"
-
 }
 
 login_to_volume() {
@@ -129,6 +132,25 @@ get_scsi_disk() {
 	done
 }
 
+data_verification() {
+		dd if=/dev/urandom of=file1 bs=4k count=10000
+		hash1=$(md5sum file1 | awk '{print $1}')
+		if [ ! -e /mnt/store/file1 ]; then
+			cp file1 /mnt/store/
+		else
+			# Delete old files
+			rm /mnt/store/file1
+			# Copy new file
+			cp file1 /mnt/store/
+		fi
+		hash2=$(md5sum /mnt/store/file1 | awk '{print $1}')
+		if [ "$hash1" = "$hash2" ]; then
+			echo "DI Test: PASSED"
+		else
+			echo "DI Test: FAILED"; exit 1
+		fi
+}
+
 write_and_verify_data(){
 
 	login_to_volume "$CONTROLLER_IP:3260"
@@ -147,20 +169,7 @@ write_and_verify_data(){
 		if [ $? -ne 0 ]; then 
 			echo "mount for $device_name" && exit 1
 		fi
-
-		dd if=/dev/urandom of=file1 bs=4k count=10000
-		hash1=$(md5sum file1 | awk '{print $1}')
-		cp file1 /mnt/store/
-		hash2=$(md5sum /mnt/store/file1 | awk '{print $1}')
-		if [ "$hash1" = "$hash2" ]; then 
-			echo "DI Test: PASSED"
-		else
-			echo "DI Test: FAILED"; exit 1
-		fi
-
-		umount /mnt/store
-		logout_of_volume
-		sleep 5
+		data_verification
 	else
 		echo "Unable to detect iSCSI device, login failed"; exit 1
 	fi
@@ -170,12 +179,12 @@ check_data_integrity_with_replica() {
 	# stopping one replica
 	replica_id_stop=$(stop_container "$1")
 	sleep 10
-	write_and_verify_data
+	data_verification
 
 	# starting the replica
 	replica_id_start=$(start_container "$replica_id_stop")
 	sleep 10
-	write_and_verify_data
+	data_verification
 
 	echo "Done for replica: $replica_id_stop"
 }
@@ -183,20 +192,20 @@ check_data_integrity_with_replica() {
 run_data_integrity_test() {
 	setup_test_env
 
-	replica1_id=$(start_replica "$CONTROLLER_IP" "$REPLICA_IP1" "vol1")
-	replica2_id=$(start_replica "$CONTROLLER_IP" "$REPLICA_IP2" "vol2")
-	replica3_id=$(start_replica "$CONTROLLER_IP" "$REPLICA_IP3" "vol3")
+	replica1_id=$(start_replica "${CONTROLLER_IP}" "${REPLICA_IP1}" "vol1")
+	replica2_id=$(start_replica "${CONTROLLER_IP}" "${REPLICA_IP2}" "vol2")
+	replica3_id=$(start_replica "${CONTROLLER_IP}" "${REPLICA_IP3}" "vol3")
 
 	sleep 15
 	write_and_verify_data
 
 	replica1_id=$(restart_replica "${replica1_id}")
 	sleep 5
-	write_and_verify_data
+	data_verification
 
-	check_data_integrity_with_replica "$replica1_id"
-	check_data_integrity_with_replica "$replica2_id"
-	check_data_integrity_with_replica "$replica3_id"
+	check_data_integrity_with_replica "${replica1_id}"
+	check_data_integrity_with_replica "${replica2_id}"
+	check_data_integrity_with_replica "${replica3_id}"
 
 	cleanup_test_env
 }
