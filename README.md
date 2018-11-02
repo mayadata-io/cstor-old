@@ -1,7 +1,15 @@
+cStor is a resilient storage engine built with proven building blocks of 
+storage components. The storage block layer is derived from the user space ZFS 
+inherited from the proven OpenSolaris stack. The volumes can be accessed via 
+iSCSI Target which is derived from Linux to BSD port. Both of these core 
+components of cStor have been field tested at thousands of installations
+for many years.
 
-This repo containts the docker files to build cStor which is used a target replica engine in openEBS.
+This is a meta-repository for cStor Storage Engine. The source code is under:
+- https://github.com/openebs/zfs
+- https://github.com/openebs/istgt
 
-It makes use of the ZFS DMU transactional layer to persist data on disk, but doing so from user space.
-The repository includes testing where the cstor-sidecar watches for creation, deletion, and updation of CRDs like cstorPool, cstorVolumeReplica, etc and performs zpool and zfs operations accordingly.
+The source code for management (or control plane) components are under:
+- https://github.com/openebs/maya
 
-The design pattern followed here is Sidecar as well as Ambassador pattern where the zfs operations on one container are visible to the other through a shared volume.
+For more information and setting up cStor, refer to https://docs.openebs.io
