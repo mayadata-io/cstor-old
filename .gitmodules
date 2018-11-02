@@ -1,0 +1,9 @@
+[submodule "zfs"]
+	path = zfs
+	url = https://github.com/openebs/zfs
+[submodule "istgt"]
+	path = istgt
+	url = https://github.com/openebs/istgt
+[submodule "spl"]
+	path = spl
+	url = https://github.com/openebs/spl
